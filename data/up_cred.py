@@ -38,6 +38,8 @@ def plot_confusion_matrix(cm, classes,
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+
+
 credit_cards=pd.read_csv('./creditcard.csv')
 
 credit_cards["normAmount"] = StandardScaler().fit_transform(credit_cards["Amount"].values.reshape(-1,1))

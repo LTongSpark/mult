@@ -53,7 +53,8 @@ class news_C(object):
         content_S_str = "".join(clean_word[index])
         print("  ".join(jieba.analyse.extract_tags(content_S_str, topK=5, withWeight=False)))
 
-        # 做映射，相当于词袋
+        # 做映射，相当于词袋 LDA主题模型
+        #格式要求  list of list  分好词的结果
         dictionary = corpora.Dictionary(clean_word)
         corpus = [dictionary.doc2bow(sentence) for sentence in clean_word]
 
@@ -63,6 +64,7 @@ class news_C(object):
         for topic in lda.print_topics(num_topics=20, num_words=5):
             print(topic[1])
 
+        #进行分词的数据
         df_train = pd.DataFrame({'contents_clean': clean_word, 'label': def_news['category']})
         label = {'汽车':1,'时尚':2}
         df_train['label'] = df_train['label'].map(label)

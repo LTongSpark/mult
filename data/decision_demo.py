@@ -35,13 +35,16 @@ class algorithm():
         y = self.data["survived"]
         #缺失值的处理
         x['age'].fillna(x['age'].mean() ,inplace=True)
+
         #分割数据集到训练集和测试集
         x_train,x_test,y_train,y_test = train_test_split(x,y ,test_size=0.4)
         # 进行处理（特征工程）特征-》类别-》one_hot编码
+        print(x_train)
         dict = DictVectorizer(sparse=False)
         x_train = dict.fit_transform(x_train.to_dict("records"))
         x_test = dict.fit_transform(x_test.to_dict("records"))
 
+        print(y_train)
         # 进行标准化处理
         # std = StandardScaler()
         # x_train = std.fit_transform(x_train)
@@ -63,6 +66,7 @@ class algorithm():
 
         print("随机森林准确率 : " , gc.score(x_test ,y_test))
         print("查看选择的参数模型：", gc.best_params_)
+        print("查看选择的参数模型：", type(gc.best_params_))
         print("*" * 100)
         #用逻辑回归进行预测
         lr = LogisticRegression(solver='liblinear')

@@ -11,6 +11,10 @@ from gensim import corpora, models, similarities
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 import gensim
 from sklearn.model_selection import train_test_split
+
+from sklearn.decomposition import PCA
+
+
 class news_C(object):
     def __init__(self):
         self.path = "D:/mr/val.txt"

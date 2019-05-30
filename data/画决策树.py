@@ -2,6 +2,7 @@
 import pydotplus
 from IPython.display import Image
 from sklearn.tree import export_graphviz
+from sklearn.cluster import DBSCAN
 
 
 def print_graph(clf,feature_names):
@@ -24,3 +25,5 @@ def print_graph(clf,feature_names):
     )
     graph = pydotplus.graph_from_dot_data(graph)
     return Image(graph.create_png())
+
+    DB = DBSCAN(eps=10, min_samples=2)

@@ -18,7 +18,8 @@ class kaggle(object):
 
     def run(self):
         warnings.filterwarnings("ignore")
-        train_df = pd.read_csv(self.path)
+        train_df1 = pd.read_csv(self.path ,chunksize = 5000 ,skipinitialspace=True)
+        train_df = pd.concat(train_df1 ,ignore_index=True)
         #画图
         #self.picture(data_train=train_df)
         self.set_missing_ages(train_df)

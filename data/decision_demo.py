@@ -10,14 +10,13 @@ from sklearn.metrics import classification_report, mean_squared_error
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.feature_extraction import DictVectorizer
+from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression, LinearRegression, SGDRegressor, Ridge
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.naive_bayes import MultinomialNB
-
-from sklearn.model_selection import KFold, cross_val_score
 
 """
 决策树对泰坦尼克号的生死预测
@@ -50,6 +49,15 @@ class algorithm():
         # x_train = std.fit_transform(x_train)
         # x_test = std.transform(x_test)
 
+        #使用神经网络进行预测
+        mlp = MLPClassifier(hidden_layer_sizes=(10,),activation='logistic',alpha=0.1,max_iter=1000)
+        mlp.fit(x_train,y_train)
+        y_predict = mlp.predict(x_test)
+        print('准确率',mlp.score(x_test,y_test))
+        print("召回率", classification_report(y_test, y_predict, labels=[0, 1], target_names=["dead", "nodead"]))
+
+
+
         #用决策树进行预测
         dec = DecisionTreeClassifier()
         dec.fit(x_train,y_train)
@@ -76,6 +84,7 @@ class algorithm():
         print("召回率" ,classification_report(y_test,y_predict ,labels=[0,1] ,target_names=["dead","nodead"]))
 
         print("*" * 100)
+
         #svm  支持向量机
         svm = SVC(kernel="rbf",probability=True)
         svm.fit(x_train,y_train)
@@ -157,18 +166,6 @@ class algorithm():
         # predict = stand_y.inverse_transform(model.predict(x_test))
         #
         # print("保存的模型额结果 ：",predict)
-
-
-
-
-
-
-
-
-
-
-
-
 
 if __name__ == '__main__':
     al =algorithm().algor()

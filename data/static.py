@@ -58,7 +58,7 @@ class static(object):
         warnings.filterwarnings("ignore")
         black = self.parse_data_black()
         white = self.parse_data_white()
-        data = pd.concat([black,white])
+        data = pd.concat([black,white] ,ignore_index=True,axis=0)
 
         # 分割数据集到训练集和测试集
         x_train, x_test, y_train, y_test = train_test_split(

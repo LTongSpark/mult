@@ -43,6 +43,7 @@ class kaggle(object):
             # print("c_param_range", c_param)
             # print("-" * 10)
             #以后只要自己要用的数据 但是分割出来还是带有用户id只能是float类型的数据
+
             lr = LogisticRegression(C=c_param, penalty="l1", solver='liblinear')
             lr.fit(x_train, y_train)
             y_pred_undersample = lr.predict(x_test)
@@ -300,6 +301,8 @@ class kaggle(object):
         plt.ylabel("人数",fontproperties = self.myfont)
         plt.legend(['获救', '未获救'], loc='best', prop=self.myfont)
         plt.show()
+
+
 
 
 if __name__ == '__main__':

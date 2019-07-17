@@ -13,12 +13,13 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler, Imputer
 warnings.filterwarnings("ignore" ,category=DeprecationWarning)
 dict = DictVectorizer(sparse=False)
 # 调用fit_transform
-data = dict.fit_transform([{'city': '北京','temperature': 100}, {'city': '上海','temperature':60}, {'city': '深圳','temperature': 30}])
+data_dict = dict.fit_transform([{'city': '北京','temperature': 100}, {'city': '上海','temperature':60}, {'city': '深圳','temperature': 30}])
+#print(dict.inverse_transform(data_dict))
 
 #对文本进行特征化
 data_cv = CountVectorizer()
-data = data_cv.fit_transform(["人生 苦短，我 喜欢 python", "人生漫长，不用 python"])
-
+data = data_cv.fit_transform(["人生 苦短，我 喜欢 python", "人生漫长，不用 python"]).toarray()
+print(data_cv.inverse_transform(data))
 con1 = " ".join(list(jieba.cut("今天很残酷，明天更残酷，后天很美好，但绝对大部分是死在明天晚上，所以每个人不要放弃今天。" ,cut_all=False)))
 con2 = " ".join(list(jieba.cut("我们看到的从很远星系来的光是在几百万年之前发出的，这样当我们看到宇宙时，我们是在看它的过去。",cut_all=False)))
 #对中文进行特征化处理
@@ -37,7 +38,8 @@ data_min = mm.fit_transform([[90,2,10,40],[60,4,15,45],[75,3,13,46]])
 #标椎化处理
 std = StandardScaler()
 data_std = std.fit_transform([[ 1., -1., 3.],[ 2., 4., 2.],[ 4., 6., -1.]])
-#print(data_std)
+print(data_std)
+print(std.transform([[ 1., -1., 3.],[ 2., 4., 2.],[ 4., 6., -1.]]))
 
 #缺失值处理
 im = Imputer(missing_values='NaN', strategy='mean', axis=0)
@@ -51,7 +53,7 @@ data_var = var.fit_transform([[0, 2, 0, 3], [0, 1, 4, 3], [0, 9, 1, 3]])
 #主成分分析进行特征降维
 pca = PCA(n_components=0.9)
 data_pac = pca.fit_transform([[2,8,4,5],[6,3,0,8],[5,4,9,1]])
-print(data_pac)
+#print(data_pac)
 
 
 

@@ -21,7 +21,6 @@ print(port.stem("maxium"))
 print(port.stem("playing"))
 
 #安装wordnet
-
 from nltk.stem import WordNetLemmatizer
 
 word = WordNetLemmatizer()

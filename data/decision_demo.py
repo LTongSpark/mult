@@ -64,6 +64,7 @@ class algorithm():
         # 预测准确率
         print("决策树预测的准确率：", dec.score(x_test, y_test))
         print("*" * 100)
+
         #随机森林进行预测
         rf = RandomForestClassifier()
         param = {"n_estimators": [120, 200, 300, 500, 800, 1200], "max_depth": [5, 8, 15, 25, 30]}
@@ -76,12 +77,17 @@ class algorithm():
         print("查看选择的参数模型：", gc.best_params_)
         print("查看选择的参数模型：", type(gc.best_params_))
         print("*" * 100)
+
         #用逻辑回归进行预测
         lr = LogisticRegression(solver='liblinear')
         lr.fit(x_train ,y_train)
         y_predict = lr.predict(x_test)
         print("逻辑回归准确率：" , lr.score(x_test ,y_test))
         print("召回率" ,classification_report(y_test,y_predict ,labels=[0,1] ,target_names=["dead","nodead"]))
+        #print(lr.predict_proba(x_test))
+        #print(lr.predict_log_proba(x_test))
+
+        print(pd.DataFrame({"x_text":x_test,'per':lr.predict_proba(x_test)}))
 
         print("*" * 100)
 
@@ -134,6 +140,7 @@ class algorithm():
         lr = LinearRegression(n_jobs=5)
         lr.fit(x_train ,y_train)
         print(lr.coef_)
+        print(lr.intercept_)
         #保存训练好的模型
         joblib.dump(lr,"./model.pkl")
         lr_predict = stand_y.inverse_transform(lr.predict(x_test))

@@ -10,7 +10,7 @@ y = tf.matmul(w,x)
 random = tf.random_normal([2,4] ,mean=-1,stddev=4)
 shuff = tf.random_shuffle(random)
 
-state = tf.Variable(0)
+state = tf.Variable(initial_value=0)
 new_value = tf.add(state,1)
 update = tf.assign(state,new_value)
 

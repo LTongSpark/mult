@@ -4,54 +4,58 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-mnist = input_data.read_data_sets('/mr/tf/data/', one_hot=True)
+mnist = input_data.read_data_sets('/mr/tf/', one_hot=True)
 training = mnist.train.images
 trainlabel = mnist.train.labels
 testing = mnist.test.images
 testlabel = mnist.test.labels
 
-x = tf.placeholder(tf.float32,[None,784])
-y = tf.placeholder(tf.float32 ,[None,10])
-W = tf.Variable(tf.zeros([784,10]))
-b = tf.Variable(tf.zeros([10]))
+#定义变量占位符
+x = tf.placeholder(tf.float64,[None,784])
+y = tf.placeholder(tf.float64 ,[None,10])
+W = tf.Variable(initial_value=tf.random_normal([784,10],dtype = tf.float64 ),dtype=tf.float64)
+b = tf.Variable(initial_value=tf.random_normal([10] ,dtype = tf.float64),dtype=tf.float64)
 
-y_ = tf.matmul(x,W) + b
-lr = tf.nn.softmax(y_)
-cost = tf.reduce_mean(-tf.reduce_sum(tf.log(lr) ,reduction_indices=1))
+#预测的数据
+#根据数学原理写方程
+pred = tf.matmul(x,W) + b
+#非真实分布 y 真实的数据
 
-#loss = tf.reduce_mean(tf.square(y-lr))
-with tf.name_scope('optm'):
-    optm = tf.train.GradientDescentOptimizer(0.01).minimize(cost)
+y_ = tf.nn.softmax(pred)
+#交叉熵  越小越好
+#定义损失函数cost
+cost = tf.reduce_mean(tf.reduce_sum(tf.multiply(y,tf.log(1/y_)) ,axis=1))
+#定义优化梯度下降
+gd = tf.train.GradientDescentOptimizer(0.01)
+optimizer = gd.minimize(cost)
 
-#预测
-pred = tf.equal(tf.argmax(lr,1) ,tf.argmax(y,1))
+#保存模型
+saver = tf.train.Saver()
 
-accr = tf.reduce_mean(tf.cast(pred,tf.float32))
+#定义session训练 for循环
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
 
-init = tf.global_variables_initializer()
-training_epochs = 50
-batch_size = 50
+    for i in range(100):
+        for j in range(100):
+            X_train, y_train = mnist.train.next_batch(550)
+            optimizer_ ,cost_ = sess.run(fetches=[optimizer,cost] ,feed_dict={x:X_train, y: y_train})
+        print("循环%d次数，损失函数值为%0.2f"%(i,cost_))
+    if (i+1)%10 == 0:
+        saver.save(sess, save_path ="" ,global_step = i)
+
+'''
+计算准确率
+'''
 
 with tf.Session() as sess:
-    sess.run(init)
-
-    for epoch in range(training_epochs):
-        avg_cost = 0.
-        #num_batch = int(mnist.train.num_examples/batch_size)
-        for i in range(batch_size):
-            batch_xs ,batch_ys = mnist.train.next_batch(batch_size)
-            cost_val ,_ = sess.run([cost,optm] ,feed_dict={x:batch_xs ,y:batch_ys})
-            feeds = {x: batch_xs, y: batch_ys}
-            avg_cost += sess.run(cost, feed_dict=feeds) / batch_size
-        if epoch % 5 == 0:
-            feeds_train = {x: batch_xs, y: batch_ys}
-            feeds_test = {x: mnist.test.images, y: mnist.test.labels}
-            train_acc = sess.run(accr, feed_dict=feeds_train)
-            test_acc = sess.run(accr, feed_dict=feeds_test)
-            print("Epoch: %03d/%03d cost: %.9f train_acc: %.3f test_acc: %.3f"
-                  % (epoch, training_epochs, avg_cost, train_acc, test_acc))
-        print("DONE")
-
+    saver.restore(sess, save_path = "")
+    X_test, y_test = mnist.test.next_batch(2000)
+    #准确率
+    pred_ = sess.run(fetches=y_ ,feed_dict={x:X_test})
+    pred_ = np.argmax(pred_,axis =1)
+    y_test = np.argmax(y_test, axis =1)
+    print("算法预测准确率：",(tf.reduce_mean(tf.equal(pred_, y_test))))
 
 
 

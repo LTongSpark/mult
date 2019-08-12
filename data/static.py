@@ -12,6 +12,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report
 from sklearn.externals import joblib
 import pymysql
+
 import warnings
 import numpy as np
 
@@ -20,7 +21,6 @@ class static(object):
     '''
     初始化
     '''
-
     def __init__(self):
         self.host = "10.212.4.34"
         self.port = 3306
@@ -55,14 +55,14 @@ class static(object):
 
     # 解析黑名单数据
     def parse_data_black(self):
-        data_black = pd.read_sql('select * from ti_ua_black_user_info_d_20190108;', con=self.mysql_cn)
+        data_black = pd.read_sql('SELECT * FROM ti_ua_black_user_info_d_20190108;', con=self.mysql_cn)
         self.parse_data(data_black, 1)
         return data_black
 
     # 解析白名单数据
     def parse_data_white(self):
-        data_white = pd.read_sql('select * from ti_ua_white_user_info_d_20190108;', con=self.mysql_cn)
-        data_white = pd.read_sql('select * from ti_ua_white_user_info_d_20190108 WHERE LENGTH(c_cust_cert_code) =18;',
+        data_white = pd.read_sql('SELECT * FROM ti_ua_white_user_info_d_20190108;', con=self.mysql_cn)
+        data_white = pd.read_sql('SELECT * FROM ti_ua_white_user_info_d_20190108 WHERE LENGTH(c_cust_cert_code) =18;',
                                  con=self.mysql_cn)
         self.parse_data(data_white, 2)
         return data_white
@@ -115,7 +115,8 @@ class static(object):
             best_list["flag"] = c_param
             best_list["num"] = lr.score(x_test1, y_test)
             content_list.append(best_list)
-            best = list((max(content_list, key=lambda x: x["num"])).values())[0]
+            #max 第一个参数是列表，第二个参数是取出字典中那个key对应的全部值
+        best = max(content_list, key=lambda x: x["num"])['flag']
 
         # 好的参数组成的逻辑回归算法
         lr = LogisticRegression(C=best, penalty='l1')

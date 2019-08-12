@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pandas as pd
 import warnings
 import logging
 from sklearn.datasets import load_boston
@@ -8,7 +7,7 @@ from sklearn.exceptions import DataConversionWarning
 from sklearn.externals import joblib
 from sklearn.metrics import classification_report, mean_squared_error
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
@@ -17,6 +16,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression, LinearRegression, SGDRegressor, Ridge
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.naive_bayes import MultinomialNB
+import pandas as pd
 
 """
 决策树对泰坦尼克号的生死预测
@@ -38,12 +38,13 @@ class algorithm():
         #分割数据集到训练集和测试集
         x_train,x_test,y_train,y_test = train_test_split(x,y ,test_size=0.4)
         # 进行处理（特征工程）特征-》类别-》one_hot编码
-        print(x_train)
+        #print(x_train)
         dict = DictVectorizer(sparse=False)
         x_train = dict.fit_transform(x_train.to_dict("records"))
         x_test = dict.fit_transform(x_test.to_dict("records"))
 
-        print(y_train)
+        print(type(x_train))
+        print(type(y_train))
         # 进行标准化处理
         # std = StandardScaler()
         # x_train = std.fit_transform(x_train)
@@ -55,8 +56,6 @@ class algorithm():
         y_predict = mlp.predict(x_test)
         print('准确率',mlp.score(x_test,y_test))
         print("召回率", classification_report(y_test, y_predict, labels=[0, 1], target_names=["dead", "nodead"]))
-
-
 
         #用决策树进行预测
         dec = DecisionTreeClassifier()
@@ -70,12 +69,15 @@ class algorithm():
         param = {"n_estimators": [120, 200, 300, 500, 800, 1200], "max_depth": [5, 8, 15, 25, 30]}
 
         # 网格搜索与交叉验证
-        gc = GridSearchCV(rf, param_grid=param, cv=5)
+        gc = GridSearchCV(rf, param_grid=param, cv=StratifiedKFold())
         gc.fit(x_train,y_train)
 
         print("随机森林准确率 : " , gc.score(x_test ,y_test))
         print("查看选择的参数模型：", gc.best_params_)
         print("查看选择的参数模型：", type(gc.best_params_))
+
+        best = gc.best_estimator_
+
         print("*" * 100)
 
         #用逻辑回归进行预测

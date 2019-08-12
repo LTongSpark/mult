@@ -11,3 +11,4 @@ with tf.Session() as sess:
     a = tf.cast(corr,tf.float32)
     print(a.eval())
     print(sess.run(accr))
+    sess.close()

@@ -2,6 +2,7 @@
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
 
 #随机生成1000个点，围绕在y=0.1x + 0.3 的直线周围
 
@@ -20,6 +21,9 @@ y_data = [ i[1] for i in vectors_set]
 plt.scatter(x_data,y_data ,c = 'r')
 plt.show()
 
+lg = LinearRegression()
+lg.fit([x_data], [y_data])
+print(lg.intercept_ ,lg.coef_)
 #利用tf来实现逻辑回归
 #生成1维的w矩阵，取值是【-1,1】之间的随机数
 W = tf.Variable(tf.random_uniform([1] ,-1.0,1.0) ,name='w')
@@ -35,14 +39,14 @@ with tf.name_scope('optimizer'):
     optimizer = tf.train.GradientDescentOptimizer(0.5).minimize(loss)
 
 #初始化
-
 init = tf.global_variables_initializer()
 bath_size = 20
 
+#保存模型
+saver = tf.train.Saver()
+
 with tf.Session() as sess:
     sess.run(init)
-    # 初始化的W和b是多少
-    print("W =", sess.run(W), "b =", sess.run(b), "loss =", sess.run(loss))
     for i in range(bath_size):
         sess.run(optimizer)
         # 输出训练好的W和b
